@@ -44,19 +44,19 @@ public class CentogramControl : Control
         MT + (1.0 - (mass - AircraftConstants.ChartMinMass)
                   / (AircraftConstants.ChartMaxMass - AircraftConstants.ChartMinMass)) * PH);
 
-    // ── Brushes / pens (created once per render call) ────────────────────
-    private static readonly IBrush PlotBg         = new SolidColorBrush(Colors.White);
-    private static readonly IBrush MinorGridBrush  = new SolidColorBrush(Color.FromArgb(255, 220, 220, 220));
-    private static readonly IBrush MajorGridBrush  = new SolidColorBrush(Color.FromArgb(255, 180, 180, 180));
-    private static readonly IBrush AxisBrush       = new SolidColorBrush(Colors.DimGray);
-    private static readonly IBrush EnvFill         = new SolidColorBrush(Color.FromArgb(55, 0, 180, 0));
-    private static readonly IBrush EnvStroke       = new SolidColorBrush(Color.FromRgb(0, 150, 0));
-    private static readonly IBrush TakeoffBrush    = new SolidColorBrush(Color.FromRgb(0, 175, 175));
-    private static readonly IBrush LandingBrush    = new SolidColorBrush(Color.FromRgb(230, 120, 0));
-    private static readonly IBrush LabelBrush      = new SolidColorBrush(Color.FromRgb(60, 60, 60));
-    private static readonly IBrush HintBrush       = new SolidColorBrush(Color.FromRgb(130, 130, 130));
-    private static readonly IBrush OobRingBrush    = new SolidColorBrush(Colors.Red);
-    private static readonly IBrush MtowLineBrush   = new SolidColorBrush(Color.FromArgb(160, 200, 0, 0));
+    // ── Brushes / pens ───────────────────────────────────────────────────
+    private static readonly IBrush PlotBg        = new SolidColorBrush(Color.FromRgb(22, 22, 34));
+    private static readonly IBrush MinorGridBrush = new SolidColorBrush(Color.FromRgb(42, 42, 62));
+    private static readonly IBrush MajorGridBrush = new SolidColorBrush(Color.FromRgb(65, 65, 90));
+    private static readonly IBrush AxisBrush      = new SolidColorBrush(Color.FromRgb(140, 140, 165));
+    private static readonly IBrush EnvFill        = new SolidColorBrush(Color.FromArgb(70, 0, 210, 80));
+    private static readonly IBrush EnvStroke      = new SolidColorBrush(Color.FromRgb(0, 200, 80));
+    private static readonly IBrush TakeoffBrush   = new SolidColorBrush(Color.FromRgb(0, 200, 210));
+    private static readonly IBrush LandingBrush   = new SolidColorBrush(Color.FromRgb(255, 150, 30));
+    private static readonly IBrush LabelBrush     = new SolidColorBrush(Color.FromRgb(200, 200, 220));
+    private static readonly IBrush HintBrush      = new SolidColorBrush(Color.FromRgb(120, 120, 150));
+    private static readonly IBrush OobRingBrush   = new SolidColorBrush(Color.FromRgb(255, 80, 80));
+    private static readonly IBrush MtowLineBrush  = new SolidColorBrush(Color.FromArgb(180, 220, 60, 60));
 
     private static readonly Pen MinorGridPen  = new(MinorGridBrush,  0.5);
     private static readonly Pen MajorGridPen  = new(MajorGridBrush,  1.0);
@@ -234,7 +234,7 @@ public class CentogramControl : Control
         double lx = ML + PW - 120;
         double ly = MT + 8;
 
-        dc.DrawRectangle(new SolidColorBrush(Color.FromArgb(180, 255, 255, 255)), null,
+        dc.DrawRectangle(new SolidColorBrush(Color.FromArgb(200, 28, 28, 45)), null,
             new Rect(lx - 6, ly - 4, 118, 46));
 
         // Takeoff dot

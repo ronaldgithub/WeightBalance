@@ -23,15 +23,15 @@
         <!-- Column headers -->
         <Grid ColumnDefinitions="180,78,76,96" Margin="0,0,0,2">
           <TextBlock Grid.Column="0" Text="Item"
-                     FontSize="10.5" FontWeight="SemiBold" Foreground="#777" />
+                     FontSize="10.5" FontWeight="SemiBold" Foreground="#999" />
           <TextBlock Grid.Column="1" Text="Mass (kg)"
-                     FontSize="10.5" FontWeight="SemiBold" Foreground="#777" TextAlignment="Right" />
+                     FontSize="10.5" FontWeight="SemiBold" Foreground="#999" TextAlignment="Right" />
           <TextBlock Grid.Column="2" Text="Arm (mm)"
-                     FontSize="10.5" FontWeight="SemiBold" Foreground="#777" TextAlignment="Right" />
+                     FontSize="10.5" FontWeight="SemiBold" Foreground="#999" TextAlignment="Right" />
           <TextBlock Grid.Column="3" Text="Moment (kg·mm)"
-                     FontSize="10.5" FontWeight="SemiBold" Foreground="#777" TextAlignment="Right" />
+                     FontSize="10.5" FontWeight="SemiBold" Foreground="#999" TextAlignment="Right" />
         </Grid>
-        <Rectangle Height="1" Fill="#CCC" Margin="0,0,0,4" />
+        <Rectangle Height="1" Fill="#444" Margin="0,0,0,4" />
 
         <!-- 1 · Empty aircraft -->
         <Grid ColumnDefinitions="180,78,76,96" Margin="0,2">
@@ -93,10 +93,10 @@
                      TextAlignment="Right" VerticalAlignment="Center" />
         </Grid>
         <TextBlock Text="     max 140 L × 0.72 = 100.8 kg"
-                   FontSize="10" Foreground="#999" Margin="0,-1,0,2" />
+                   FontSize="10" Foreground="#666" Margin="0,-1,0,2" />
 
         <!-- ── Total Takeoff ──────────────────────────────────────── -->
-        <Rectangle Height="1" Fill="#CCC" Margin="0,4,0,4" />
+        <Rectangle Height="1" Fill="#444" Margin="0,4,0,4" />
 
         <Border Background="{Binding IsTakeoffWithinEnvelope, Converter={StaticResource BoolToColor}}"
                 CornerRadius="4" Padding="4,4">
@@ -116,13 +116,13 @@
         <!-- CG at Takeoff -->
         <StackPanel Orientation="Horizontal" Spacing="20" Margin="6,3,0,0">
           <TextBlock Text="{Binding CgMmTakeoff,     StringFormat='CG: {0:F1} mm'}"
-                     FontSize="11" Foreground="#444" />
+                     FontSize="11" Foreground="#BBB" />
           <TextBlock Text="{Binding CgPctMacTakeoff, StringFormat='= {0:F2}% MAC'}"
-                     FontSize="11" Foreground="#444" FontWeight="SemiBold" />
+                     FontSize="11" Foreground="#BBB" FontWeight="SemiBold" />
         </StackPanel>
 
         <!-- ── Fuel Burn ──────────────────────────────────────────── -->
-        <Rectangle Height="1" Fill="#EEE" Margin="0,8,0,4" />
+        <Rectangle Height="1" Fill="#333" Margin="0,8,0,4" />
 
         <Grid ColumnDefinitions="180,78,76,96" Margin="0,2">
           <TextBlock Grid.Column="0" Text="7  Fuel Burn (mission)" VerticalAlignment="Center" />
@@ -136,7 +136,7 @@
         </Grid>
 
         <!-- ── Total at Landing ───────────────────────────────────── -->
-        <Rectangle Height="1" Fill="#CCC" Margin="0,4,0,4" />
+        <Rectangle Height="1" Fill="#444" Margin="0,4,0,4" />
 
         <Border Background="{Binding IsLandingWithinEnvelope, Converter={StaticResource BoolToColor}}"
                 CornerRadius="4" Padding="4,4">
@@ -156,28 +156,28 @@
         <!-- CG at Landing -->
         <StackPanel Orientation="Horizontal" Spacing="20" Margin="6,3,0,0">
           <TextBlock Text="{Binding CgMmLanding,     StringFormat='CG: {0:F1} mm'}"
-                     FontSize="11" Foreground="#444" />
+                     FontSize="11" Foreground="#BBB" />
           <TextBlock Text="{Binding CgPctMacLanding, StringFormat='= {0:F2}% MAC'}"
-                     FontSize="11" Foreground="#444" FontWeight="SemiBold" />
+                     FontSize="11" Foreground="#BBB" FontWeight="SemiBold" />
         </StackPanel>
 
         <!-- ── Limits reference ───────────────────────────────────── -->
-        <Rectangle Height="1" Fill="#EEE" Margin="0,14,0,6" />
+        <Rectangle Height="1" Fill="#333" Margin="0,14,0,6" />
         <TextBlock Text="Limits (POH §2.6 / §2.7)"
-                   FontSize="10.5" FontWeight="SemiBold" Foreground="#888" />
+                   FontSize="10.5" FontWeight="SemiBold" Foreground="#AAA" />
         <TextBlock Text="Max baggage area 1: 35 kg"
-                   FontSize="10" Foreground="#999" Margin="0,2" />
+                   FontSize="10" Foreground="#777" Margin="0,2" />
         <TextBlock Text="Max baggage area 2: 25 kg  (area 1+2 combined ≤ 35 kg)"
-                   FontSize="10" Foreground="#999" Margin="0,1" />
+                   FontSize="10" Foreground="#777" Margin="0,1" />
         <TextBlock Text="Fuel density: 0.72 kg/L  ·  2 × 70 L tanks"
-                   FontSize="10" Foreground="#999" Margin="0,1" />
+                   FontSize="10" Foreground="#777" Margin="0,1" />
 
       </StackPanel>
     </ScrollViewer>
 
     <!-- GridSplitter -->
     <GridSplitter Grid.Column="1" ResizeDirection="Columns"
-                  Background="#BBBBBB" Width="4" />
+                  Background="#333" Width="4" />
 
     <!-- ════════════════════════════════════════════════════════════
          RIGHT PANEL — centogram
