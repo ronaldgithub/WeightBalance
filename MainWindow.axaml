@@ -1,0 +1,192 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ctrl="using:WeightBalance.Controls"
+        x:Class="WeightBalance.MainWindow"
+        Title="Weight &amp; Balance — Sonaca S2"
+        Width="1150" Height="720"
+        MinWidth="820" MinHeight="520">
+
+  <Grid ColumnDefinitions="Auto,4,*">
+
+    <!-- ════════════════════════════════════════════════════════════
+         LEFT PANEL — input table
+         ════════════════════════════════════════════════════════════ -->
+    <ScrollViewer Grid.Column="0" Width="460"
+                  VerticalScrollBarVisibility="Auto"
+                  HorizontalScrollBarVisibility="Disabled">
+      <StackPanel Margin="12,10,8,12" Spacing="0">
+
+        <!-- Title -->
+        <TextBlock Text="Weight &amp; Balance — Sonaca S2 (Sling 2)"
+                   FontSize="13" FontWeight="Bold" Margin="0,0,0,10" />
+
+        <!-- Column headers -->
+        <Grid ColumnDefinitions="180,78,76,96" Margin="0,0,0,2">
+          <TextBlock Grid.Column="0" Text="Item"
+                     FontSize="10.5" FontWeight="SemiBold" Foreground="#777" />
+          <TextBlock Grid.Column="1" Text="Mass (kg)"
+                     FontSize="10.5" FontWeight="SemiBold" Foreground="#777" TextAlignment="Right" />
+          <TextBlock Grid.Column="2" Text="Arm (mm)"
+                     FontSize="10.5" FontWeight="SemiBold" Foreground="#777" TextAlignment="Right" />
+          <TextBlock Grid.Column="3" Text="Moment (kg·mm)"
+                     FontSize="10.5" FontWeight="SemiBold" Foreground="#777" TextAlignment="Right" />
+        </Grid>
+        <Rectangle Height="1" Fill="#CCC" Margin="0,0,0,4" />
+
+        <!-- 1 · Empty aircraft -->
+        <Grid ColumnDefinitions="180,78,76,96" Margin="0,2">
+          <TextBlock Grid.Column="0" Text="1  Empty aircraft" VerticalAlignment="Center" />
+          <TextBox   Grid.Column="1"
+                     Text="{Binding EmptyMass, Converter={StaticResource S2D}, Mode=TwoWay}"
+                     HorizontalContentAlignment="Right" Padding="4,2" />
+          <TextBlock Grid.Column="2" Text="{Binding EmptyArm, StringFormat='{}{0:F0}'}"
+                     TextAlignment="Right" VerticalAlignment="Center" />
+          <TextBlock Grid.Column="3" Text="{Binding EmptyMoment, StringFormat='{}{0:F0}'}"
+                     TextAlignment="Right" VerticalAlignment="Center" />
+        </Grid>
+
+        <!-- 2 · Pilot & Passengers -->
+        <Grid ColumnDefinitions="180,78,76,96" Margin="0,2">
+          <TextBlock Grid.Column="0" Text="2  Pilot &amp; Passengers" VerticalAlignment="Center" />
+          <TextBox   Grid.Column="1"
+                     Text="{Binding PilotMass, Converter={StaticResource S2D}, Mode=TwoWay}"
+                     HorizontalContentAlignment="Right" Padding="4,2" />
+          <TextBlock Grid.Column="2" Text="{Binding PilotArm, StringFormat='{}{0:F0}'}"
+                     TextAlignment="Right" VerticalAlignment="Center" />
+          <TextBlock Grid.Column="3" Text="{Binding PilotMoment, StringFormat='{}{0:F0}'}"
+                     TextAlignment="Right" VerticalAlignment="Center" />
+        </Grid>
+
+        <!-- 3 · Baggage area 1 -->
+        <Grid ColumnDefinitions="180,78,76,96" Margin="0,2">
+          <TextBlock Grid.Column="0" Text="3  Baggage (area 1)" VerticalAlignment="Center" />
+          <TextBox   Grid.Column="1"
+                     Text="{Binding BaggageArea1Mass, Converter={StaticResource S2D}, Mode=TwoWay}"
+                     HorizontalContentAlignment="Right" Padding="4,2" />
+          <TextBlock Grid.Column="2" Text="{Binding BaggageArea1Arm, StringFormat='{}{0:F0}'}"
+                     TextAlignment="Right" VerticalAlignment="Center" />
+          <TextBlock Grid.Column="3" Text="{Binding BaggageArea1Moment, StringFormat='{}{0:F0}'}"
+                     TextAlignment="Right" VerticalAlignment="Center" />
+        </Grid>
+
+        <!-- 4 · Baggage area 2 -->
+        <Grid ColumnDefinitions="180,78,76,96" Margin="0,2">
+          <TextBlock Grid.Column="0" Text="4  Baggage (area 2)" VerticalAlignment="Center" />
+          <TextBox   Grid.Column="1"
+                     Text="{Binding BaggageArea2Mass, Converter={StaticResource S2D}, Mode=TwoWay}"
+                     HorizontalContentAlignment="Right" Padding="4,2" />
+          <TextBlock Grid.Column="2" Text="{Binding BaggageArea2Arm, StringFormat='{}{0:F0}'}"
+                     TextAlignment="Right" VerticalAlignment="Center" />
+          <TextBlock Grid.Column="3" Text="{Binding BaggageArea2Moment, StringFormat='{}{0:F0}'}"
+                     TextAlignment="Right" VerticalAlignment="Center" />
+        </Grid>
+
+        <!-- 5 · Fuel mass -->
+        <Grid ColumnDefinitions="180,78,76,96" Margin="0,2">
+          <TextBlock Grid.Column="0" Text="5  Fuel" VerticalAlignment="Center" />
+          <TextBox   Grid.Column="1"
+                     Text="{Binding FuelMass, Converter={StaticResource S2D}, Mode=TwoWay}"
+                     HorizontalContentAlignment="Right" Padding="4,2" />
+          <TextBlock Grid.Column="2" Text="{Binding FuelArm, StringFormat='{}{0:F0}'}"
+                     TextAlignment="Right" VerticalAlignment="Center" />
+          <TextBlock Grid.Column="3" Text="{Binding FuelMoment, StringFormat='{}{0:F0}'}"
+                     TextAlignment="Right" VerticalAlignment="Center" />
+        </Grid>
+        <TextBlock Text="     max 140 L × 0.72 = 100.8 kg"
+                   FontSize="10" Foreground="#999" Margin="0,-1,0,2" />
+
+        <!-- ── Total Takeoff ──────────────────────────────────────── -->
+        <Rectangle Height="1" Fill="#CCC" Margin="0,4,0,4" />
+
+        <Border Background="{Binding IsTakeoffWithinEnvelope, Converter={StaticResource BoolToColor}}"
+                CornerRadius="4" Padding="4,4">
+          <Grid ColumnDefinitions="180,78,76,96">
+            <TextBlock Grid.Column="0" Text="6  Total T/O  (1–5)"
+                       FontWeight="Bold" VerticalAlignment="Center" />
+            <TextBlock Grid.Column="1"
+                       Text="{Binding TotalMassTakeoff, StringFormat='{}{0:F1}'}"
+                       FontWeight="Bold" TextAlignment="Right" VerticalAlignment="Center" />
+            <TextBlock Grid.Column="2" VerticalAlignment="Center" />
+            <TextBlock Grid.Column="3"
+                       Text="{Binding TotalMomentTakeoff, StringFormat='{}{0:F0}'}"
+                       FontWeight="Bold" TextAlignment="Right" VerticalAlignment="Center" />
+          </Grid>
+        </Border>
+
+        <!-- CG at Takeoff -->
+        <StackPanel Orientation="Horizontal" Spacing="20" Margin="6,3,0,0">
+          <TextBlock Text="{Binding CgMmTakeoff,     StringFormat='CG: {0:F1} mm'}"
+                     FontSize="11" Foreground="#444" />
+          <TextBlock Text="{Binding CgPctMacTakeoff, StringFormat='= {0:F2}% MAC'}"
+                     FontSize="11" Foreground="#444" FontWeight="SemiBold" />
+        </StackPanel>
+
+        <!-- ── Fuel Burn ──────────────────────────────────────────── -->
+        <Rectangle Height="1" Fill="#EEE" Margin="0,8,0,4" />
+
+        <Grid ColumnDefinitions="180,78,76,96" Margin="0,2">
+          <TextBlock Grid.Column="0" Text="7  Fuel Burn (mission)" VerticalAlignment="Center" />
+          <TextBox   Grid.Column="1"
+                     Text="{Binding FuelBurnMass, Converter={StaticResource S2D}, Mode=TwoWay}"
+                     HorizontalContentAlignment="Right" Padding="4,2" />
+          <TextBlock Grid.Column="2" Text="{Binding FuelArm, StringFormat='{}{0:F0}'}"
+                     TextAlignment="Right" VerticalAlignment="Center" />
+          <TextBlock Grid.Column="3" Text="{Binding FuelBurnMoment, StringFormat='{}{0:F0}'}"
+                     TextAlignment="Right" VerticalAlignment="Center" />
+        </Grid>
+
+        <!-- ── Total at Landing ───────────────────────────────────── -->
+        <Rectangle Height="1" Fill="#CCC" Margin="0,4,0,4" />
+
+        <Border Background="{Binding IsLandingWithinEnvelope, Converter={StaticResource BoolToColor}}"
+                CornerRadius="4" Padding="4,4">
+          <Grid ColumnDefinitions="180,78,76,96">
+            <TextBlock Grid.Column="0" Text="8  Total at Landing  (6−7)"
+                       FontWeight="Bold" VerticalAlignment="Center" />
+            <TextBlock Grid.Column="1"
+                       Text="{Binding TotalMassLanding, StringFormat='{}{0:F1}'}"
+                       FontWeight="Bold" TextAlignment="Right" VerticalAlignment="Center" />
+            <TextBlock Grid.Column="2" VerticalAlignment="Center" />
+            <TextBlock Grid.Column="3"
+                       Text="{Binding TotalMomentLanding, StringFormat='{}{0:F0}'}"
+                       FontWeight="Bold" TextAlignment="Right" VerticalAlignment="Center" />
+          </Grid>
+        </Border>
+
+        <!-- CG at Landing -->
+        <StackPanel Orientation="Horizontal" Spacing="20" Margin="6,3,0,0">
+          <TextBlock Text="{Binding CgMmLanding,     StringFormat='CG: {0:F1} mm'}"
+                     FontSize="11" Foreground="#444" />
+          <TextBlock Text="{Binding CgPctMacLanding, StringFormat='= {0:F2}% MAC'}"
+                     FontSize="11" Foreground="#444" FontWeight="SemiBold" />
+        </StackPanel>
+
+        <!-- ── Limits reference ───────────────────────────────────── -->
+        <Rectangle Height="1" Fill="#EEE" Margin="0,14,0,6" />
+        <TextBlock Text="Limits (POH §2.6 / §2.7)"
+                   FontSize="10.5" FontWeight="SemiBold" Foreground="#888" />
+        <TextBlock Text="Max baggage area 1: 35 kg"
+                   FontSize="10" Foreground="#999" Margin="0,2" />
+        <TextBlock Text="Max baggage area 2: 25 kg  (area 1+2 combined ≤ 35 kg)"
+                   FontSize="10" Foreground="#999" Margin="0,1" />
+        <TextBlock Text="Fuel density: 0.72 kg/L  ·  2 × 70 L tanks"
+                   FontSize="10" Foreground="#999" Margin="0,1" />
+
+      </StackPanel>
+    </ScrollViewer>
+
+    <!-- GridSplitter -->
+    <GridSplitter Grid.Column="1" ResizeDirection="Columns"
+                  Background="#BBBBBB" Width="4" />
+
+    <!-- ════════════════════════════════════════════════════════════
+         RIGHT PANEL — centogram
+         ════════════════════════════════════════════════════════════ -->
+    <ctrl:CentogramControl Grid.Column="2"
+        TakeoffMass="{Binding TotalMassTakeoff}"
+        TakeoffCgPct="{Binding CgPctMacTakeoff}"
+        LandingMass="{Binding TotalMassLanding}"
+        LandingCgPct="{Binding CgPctMacLanding}" />
+
+  </Grid>
+</Window>

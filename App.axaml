@@ -1,0 +1,14 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:conv="using:WeightBalance.Converters"
+             x:Class="WeightBalance.App"
+             RequestedThemeVariant="Light">
+    <Application.Styles>
+        <FluentTheme />
+    </Application.Styles>
+
+    <Application.Resources>
+        <conv:StringToDoubleConverter    x:Key="S2D" />
+        <conv:BoolToEnvelopeColorConverter x:Key="BoolToColor" />
+    </Application.Resources>
+</Application>
