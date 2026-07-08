@@ -12,7 +12,7 @@ A desktop Weight & Balance calculator for the Sonaca S2 (also marketed as the Sl
 
 ## Screenshot
 
-![Weight & Balance app](pic/excel_example_centogram.png)
+![Weight & Balance app — input table and live CG envelope chart](pic/screenshot.jpg)
 
 ## Requirements
 
@@ -22,7 +22,7 @@ A desktop Weight & Balance calculator for the Sonaca S2 (also marketed as the Sl
 ## Getting started
 
 ```bash
-git clone https://github.com/WeightBalance/WeightBalance.git
+git clone https://github.com/ronaldgithub/WeightBalance.git
 cd WeightBalance
 dotnet run
 ```
