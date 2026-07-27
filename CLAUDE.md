@@ -27,6 +27,8 @@ WeightBalance/
 │   └── BoolToEnvelopeColorConverter.cs
 ├── Controls/
 │   └── CentogramControl.cs       — custom-rendered centogram chart
+├── Assets/
+│   └── icon.ico                   — app/window icon (multi-res)
 ├── App.axaml / App.axaml.cs      — FluentTheme + converter resources
 ├── MainWindow.axaml               — two-panel layout (input | centogram)
 └── MainWindow.axaml.cs            — sets DataContext = new MainViewModel()
@@ -34,6 +36,10 @@ WeightBalance/
 
 Compiled bindings are **disabled** (`AvaloniaUseCompiledBindingsByDefault=false`) so
 reflection bindings with converters work without `x:DataType` annotations.
+
+`MainWindow.Title` includes the maintainer contact
+(`ronald.de.groot@opendata.nl`) after the aircraft name — keep it when editing
+the title string.
 
 ## Key domain knowledge
 
@@ -77,6 +83,21 @@ With default inputs the app should show:
 | Total mass landing (−15 kg burn) | 746.5 kg |
 | CG landing | 916.1 mm = 23.07% MAC |
 | Landing in envelope | **true** |
+
+## Fuel suggestion ("Calc" button)
+
+`MainViewModel.SuggestedFuelMass` finds the largest fuel load (empty/pilot/baggage
+held fixed) that keeps the takeoff point at/under MTOW **and** inside the CG
+envelope. It scans down from `min(MaxFuelMass, MTOW − non-fuel mass)` in 0.05 kg
+steps and returns the first mass for which `IsPointInEnvelope` is true (no
+closed-form solve — the envelope's forward/aft limits are piecewise-linear in
+mass, so a scan is simplest and cheap enough for a button click).
+`SuggestedFuelLiters` divides by `FuelDensity`; `SuggestedFuelText` formats both
+for the red hint label under the Fuel row. The `ApplySuggestedFuelCommand`
+(`[RelayCommand]`) writes the suggestion straight into `FuelMass`. These three
+outputs are recalculated in `NotifyAllOutputs()`, not `NotifyLandingOutputs()`,
+since they depend on the non-fuel masses, not on `FuelMass` or `FuelBurnMass`
+itself.
 
 ## CentogramControl rendering order
 

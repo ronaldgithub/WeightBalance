@@ -8,6 +8,8 @@ A desktop Weight & Balance calculator for the Sonaca S2 (also marketed as the Sl
 - Live centogram chart showing your CG position against the POH envelope
 - Colour-coded rows: green = within limits, red/orange = outside limits
 - Separate Takeoff and Landing CG calculation (accounts for fuel burn)
+- **Calc** button suggests the maximum fuel load (in litres and kg) that keeps
+  the takeoff point within the CG envelope, given your current empty/pilot/baggage weights
 - All aircraft constants sourced from **Sonair-S2-D-MAN-001 Rev B** (§2.6, §2.7, §6-5)
 
 ## Screenshot
@@ -39,6 +41,8 @@ dotnet run
 | Fuel Burn | Estimated fuel burn for the planned mission |
 
 The chart on the right updates in real time as you type. Your **Takeoff** position is shown as a teal dot and the **Landing** position as an orange dot. A red ring indicates the point is outside the envelope.
+
+Click **Calc** next to the Fuel row to fill it with the maximum fuel load that keeps takeoff within the envelope for your current empty/pilot/baggage weights; the red hint text underneath shows the suggested amount in litres and kg.
 
 ## Aircraft data (Sonair-S2-D-MAN-001 Rev B)
 

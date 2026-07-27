@@ -2,7 +2,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:ctrl="using:WeightBalance.Controls"
         x:Class="WeightBalance.MainWindow"
-        Title="Weight &amp; Balance — Sonaca S2"
+        Icon="avares://WeightBalance/Assets/icon.ico"
+        Title="Weight &amp; Balance — Sonaca S2 — ronald.de.groot@opendata.nl"
         Width="1150" Height="720"
         MinWidth="820" MinHeight="520">
 
@@ -94,6 +95,14 @@
         </Grid>
         <TextBlock Text="     max 140 L × 0.72 = 100.8 kg"
                    FontSize="10" Foreground="#666" Margin="0,-1,0,2" />
+
+        <StackPanel Orientation="Horizontal" Spacing="6" Margin="0,0,0,2">
+          <Button Content="Calc" FontSize="10" Padding="8,2"
+                  Command="{Binding ApplySuggestedFuelCommand}"
+                  ToolTip.Tip="Set fuel to the maximum load that stays within the CG envelope" />
+          <TextBlock Text="{Binding SuggestedFuelText}"
+                     FontSize="10" Foreground="Red" VerticalAlignment="Center" />
+        </StackPanel>
 
         <!-- ── Total Takeoff ──────────────────────────────────────── -->
         <Rectangle Height="1" Fill="#444" Margin="0,4,0,4" />
