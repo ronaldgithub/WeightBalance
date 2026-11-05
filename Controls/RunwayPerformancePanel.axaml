@@ -2,7 +2,26 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="WeightBalance.Controls.RunwayPerformancePanel">
 
-  <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+  <UserControl.Styles>
+    <Style Selector="Border.cell">
+      <Setter Property="BorderBrush" Value="#444" />
+      <Setter Property="BorderThickness" Value="0.5" />
+      <Setter Property="Height" Value="30" />
+    </Style>
+    <Style Selector="Border.header">
+      <Setter Property="Background" Value="#2A2A2A" />
+    </Style>
+    <Style Selector="Border.used">
+      <Setter Property="Background" Value="#2B5FAA" />
+    </Style>
+    <Style Selector="Border.used TextBlock">
+      <Setter Property="FontWeight" Value="Bold" />
+    </Style>
+  </UserControl.Styles>
+
+  <Grid ColumnDefinitions="Auto,*">
+
+  <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
     <StackPanel Margin="12,10,12,12" MaxWidth="640" HorizontalAlignment="Left">
 
       <TextBlock Text="{Binding Title}"
@@ -111,4 +130,35 @@
 
     </StackPanel>
   </ScrollViewer>
+
+  <!-- POH table -->
+  <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+    <StackPanel Margin="24,10,12,12" HorizontalAlignment="Left">
+      <TextBlock Text="POH table: distance over 15 m (m)"
+                 FontSize="13" FontWeight="Bold" Margin="0,0,0,2" />
+      <TextBlock Text="Concrete, zero wind  ·  Hp in ft, OAT in °C"
+                 FontSize="10.5" Foreground="#999" Margin="0,0,0,8" />
+      <ItemsControl ItemsSource="{Binding TableCells}" Width="480" HorizontalAlignment="Left">
+        <ItemsControl.ItemsPanel>
+          <ItemsPanelTemplate>
+            <UniformGrid Columns="15" />
+          </ItemsPanelTemplate>
+        </ItemsControl.ItemsPanel>
+        <ItemsControl.ItemTemplate>
+          <DataTemplate>
+            <Border Classes="cell"
+                    Classes.header="{Binding IsHeader}"
+                    Classes.used="{Binding IsUsed}">
+              <TextBlock Text="{Binding Text}" FontSize="10.5"
+                         HorizontalAlignment="Center" VerticalAlignment="Center" />
+            </Border>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+      <TextBlock Text="Blue cells are the ones used for the current altitude and OAT."
+                 FontSize="10" Foreground="#AAA" TextWrapping="Wrap" Margin="0,6,0,0" />
+    </StackPanel>
+  </ScrollViewer>
+
+  </Grid>
 </UserControl>

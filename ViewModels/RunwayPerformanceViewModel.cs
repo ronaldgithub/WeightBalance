@@ -1,12 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using WeightBalance.Models;
 
 namespace WeightBalance.ViewModels;
 
 public sealed record PerformanceBreakdownRow(string Label, string Distance, string Run);
+public sealed record PerformanceTableCell(string Text, bool IsHeader, bool IsUsed);
 
 // Backs both the Takeoff and the Landing tab.
 public partial class RunwayPerformanceViewModel : ObservableObject
@@ -91,6 +93,31 @@ public partial class RunwayPerformanceViewModel : ObservableObject
         }
     }
 
+    // The POH table in reading order, with its row and column headers, for a 15-column grid.
+    public IReadOnlyList<PerformanceTableCell> TableCells
+    {
+        get
+        {
+            var used = NumberInput.Parse(PressureAltitudeText) is { } hp && NumberInput.Parse(OatText) is { } oat
+                ? RunwayPerformance.ContributingCells(hp, oat)
+                : [];
+
+            var cells = new List<PerformanceTableCell> { new("Hp", true, false) };
+            cells.AddRange(RunwayPerformance.OatAxis.Select(t => new PerformanceTableCell(Invariant($"{t:0}"), true, false)));
+
+            for (int row = 0; row < RunwayPerformance.HpAxis.Length; row++)
+            {
+                cells.Add(new(Invariant($"{RunwayPerformance.HpAxis[row]:0}"), true, false));
+                for (int col = 0; col < RunwayPerformance.OatAxis.Length; col++)
+                {
+                    int r = row, c = col;
+                    cells.Add(new(_performance.CellText(row, col), false, used.Any(u => u.Row == r && u.Col == c)));
+                }
+            }
+            return cells;
+        }
+    }
+
     private PerformanceResult? Evaluate(out string? error)
     {
         double? hp    = NumberInput.Parse(PressureAltitudeText);
@@ -125,5 +152,6 @@ public partial class RunwayPerformanceViewModel : ObservableObject
         OnPropertyChanged(nameof(DistanceText));
         OnPropertyChanged(nameof(TableNote));
         OnPropertyChanged(nameof(Breakdown));
+        OnPropertyChanged(nameof(TableCells));
     }
 }

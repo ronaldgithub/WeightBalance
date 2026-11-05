@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace WeightBalance.Models;
 
@@ -25,10 +26,10 @@ public sealed class RunwayPerformance
     public const double TailwindPerKnot  = 24.0;  // m added per knot of tailwind
     public const double MaxTailwindKnots = 10.0;  // tailwind correction only goes this far
 
-    private static readonly double[] OatAxis =
+    public static readonly double[] OatAxis =
         [-30, -25, -20, -15, -10, -5, 0, 5, 10, 15, 20, 25, 30, 35];
 
-    private static readonly double[] HpAxis =
+    public static readonly double[] HpAxis =
         [0, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000];
 
     // A cell the POH prints as "<470" or "<475". The baseline distance is used for it,
@@ -129,21 +130,42 @@ public sealed class RunwayPerformance
                                      wind, slope, distance, run);
     }
 
-    private double LookUp(double hp, double oat, out bool usesUpperBound)
+    // The table text as printed in the POH, including "<475" style cells.
+    public string CellText(int row, int col)
     {
+        double cell = _distanceTable[row, col];
+        return cell == U
+            ? FormattableString.Invariant($"<{BaselineDistance:0}")
+            : FormattableString.Invariant($"{cell:0}");
+    }
+
+    // The table cells a lookup interpolates between. Empty outside the table.
+    public static List<(int Row, int Col, double Weight)> ContributingCells(double hp, double oat)
+    {
+        var cells = new List<(int Row, int Col, double Weight)>();
+        if (hp < HpAxis[0] || hp > HpAxis[^1] || oat < OatAxis[0] || oat > OatAxis[^1])
+            return cells;
+
         var (row, rowFraction) = Bracket(HpAxis, hp);
         var (col, colFraction) = Bracket(OatAxis, oat);
 
-        double result = 0;
-        usesUpperBound = false;
         for (int r = 0; r <= 1; r++)
         for (int c = 0; c <= 1; c++)
         {
             double weight = (r == 0 ? 1 - rowFraction : rowFraction)
                           * (c == 0 ? 1 - colFraction : colFraction);
-            if (weight == 0) continue;
+            if (weight > 0) cells.Add((row + r, col + c, weight));
+        }
+        return cells;
+    }
 
-            double cell = _distanceTable[row + r, col + c];
+    private double LookUp(double hp, double oat, out bool usesUpperBound)
+    {
+        double result = 0;
+        usesUpperBound = false;
+        foreach (var (row, col, weight) in ContributingCells(hp, oat))
+        {
+            double cell = _distanceTable[row, col];
             if (cell == U)
             {
                 usesUpperBound = true;
