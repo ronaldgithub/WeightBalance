@@ -10,6 +10,9 @@ A desktop Weight & Balance calculator for the Sonaca S2 (also marketed as the Sl
 - Separate Takeoff and Landing CG calculation (accounts for fuel burn)
 - **Calc** button suggests the maximum fuel load (in litres and kg) that keeps
   the takeoff point within the CG envelope, given your current empty/pilot/baggage weights
+- **Takeoff** and **Landing** tabs calculate distances from the POH tables (§5.3.6, §5.3.10)
+  for pressure altitude, OAT, surface, wind and slope. The distance over 15 m comes from the
+  POH table; the ground run is a labelled estimate
 - All aircraft constants sourced from **Sonair-S2-D-MAN-001 Rev B** (§2.6, §2.7, §6-5)
 
 ## Screenshot
