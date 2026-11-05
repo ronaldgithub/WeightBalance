@@ -123,6 +123,8 @@ headwind, +24 m/kt tailwind) and slope.
 - The POH tables cover only the distance over 15 m. The run is an estimate: table
   distance × baseline run / baseline distance. It must stay labelled as an estimate.
 - If a W&B entry is invalid, both tabs warn that the mass may be wrong.
+- Each tab shows its POH table on the right and highlights the cells used, via
+  `RunwayPerformance.ContributingCells`, the same method the calculation uses.
 
 Reference values at 3000 ft, 20 °C, dry grass, 5 kt tailwind, 1° upslope:
 takeoff run 623 m, distance 834 m; landing run 405 m, distance 737 m.
