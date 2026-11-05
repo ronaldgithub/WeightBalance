@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using WeightBalance.Models;
@@ -8,6 +10,22 @@ namespace WeightBalance.ViewModels;
 public partial class MainViewModel : ObservableObject
 {
     // ── Editable inputs ─────────────────────────────────────────────────
+    // The fields hold text. Only valid text updates the mass, so a blank or malformed
+    // field keeps the last valid mass and MassInputError says so.
+    [ObservableProperty] private string _emptyMassText        = FormatMass(AircraftConstants.DefaultEmptyMass);
+    [ObservableProperty] private string _pilotMassText        = FormatMass(AircraftConstants.DefaultPilotMass);
+    [ObservableProperty] private string _baggageArea1MassText = FormatMass(AircraftConstants.DefaultBaggageArea1Mass);
+    [ObservableProperty] private string _baggageArea2MassText = FormatMass(AircraftConstants.DefaultBaggageArea2Mass);
+    [ObservableProperty] private string _fuelMassText         = FormatMass(AircraftConstants.DefaultFuelMass);
+    [ObservableProperty] private string _fuelBurnMassText     = FormatMass(AircraftConstants.DefaultFuelBurnMass);
+
+    partial void OnEmptyMassTextChanged(string value)        => ApplyMassText(value, m => EmptyMass = m);
+    partial void OnPilotMassTextChanged(string value)        => ApplyMassText(value, m => PilotMass = m);
+    partial void OnBaggageArea1MassTextChanged(string value) => ApplyMassText(value, m => BaggageArea1Mass = m);
+    partial void OnBaggageArea2MassTextChanged(string value) => ApplyMassText(value, m => BaggageArea2Mass = m);
+    partial void OnFuelMassTextChanged(string value)         => ApplyMassText(value, m => FuelMass = m);
+    partial void OnFuelBurnMassTextChanged(string value)     => ApplyMassText(value, m => FuelBurnMass = m);
+
     [ObservableProperty] private double _emptyMass        = AircraftConstants.DefaultEmptyMass;
     [ObservableProperty] private double _pilotMass        = AircraftConstants.DefaultPilotMass;
     [ObservableProperty] private double _baggageArea1Mass = AircraftConstants.DefaultBaggageArea1Mass;
@@ -22,6 +40,39 @@ public partial class MainViewModel : ObservableObject
     partial void OnBaggageArea2MassChanged(double value) => NotifyAllOutputs();
     partial void OnFuelMassChanged(double value)         => NotifyAllOutputs();
     partial void OnFuelBurnMassChanged(double value)     => NotifyLandingOutputs();
+
+    public string MassInputError
+    {
+        get
+        {
+            var errors = new List<string>();
+            AddMassError(errors, "Empty aircraft",     EmptyMassText,        EmptyMass);
+            AddMassError(errors, "Pilot & Passengers", PilotMassText,        PilotMass);
+            AddMassError(errors, "Baggage (area 1)",   BaggageArea1MassText, BaggageArea1Mass);
+            AddMassError(errors, "Baggage (area 2)",   BaggageArea2MassText, BaggageArea2Mass);
+            AddMassError(errors, "Fuel",               FuelMassText,         FuelMass);
+            AddMassError(errors, "Fuel burn",          FuelBurnMassText,     FuelBurnMass);
+            return string.Join("\n", errors);
+        }
+    }
+
+    private static void AddMassError(List<string> errors, string field, string text, double lastValid)
+    {
+        if (ParseMass(text) == null)
+            errors.Add($"{field}: enter 0 or more, using a dot for decimals. Totals still use {FormatMass(lastValid)} kg.");
+    }
+
+    private void ApplyMassText(string text, Action<double> setMass)
+    {
+        if (ParseMass(text) is { } mass) setMass(mass);
+        OnPropertyChanged(nameof(MassInputError));
+        UpdateTakeoffLoad();
+        UpdateLandingLoad();
+    }
+
+    private static double? ParseMass(string? text) => NumberInput.Parse(text) is >= 0 and var mass ? mass : null;
+
+    private static string FormatMass(double mass) => mass.ToString("F1", CultureInfo.InvariantCulture);
 
     // ── Fixed arms (exposed for AXAML binding) ───────────────────────────
     public double EmptyArm        => AircraftConstants.EmptyArm;
@@ -67,7 +118,7 @@ public partial class MainViewModel : ObservableObject
             : "no fuel load keeps this within the envelope — reduce load";
 
     [RelayCommand]
-    private void ApplySuggestedFuel() => FuelMass = SuggestedFuelMass;
+    private void ApplySuggestedFuel() => FuelMassText = FormatMass(SuggestedFuelMass);
 
     private double CalculateMaxFuelWithinEnvelope()
     {
@@ -103,6 +154,48 @@ public partial class MainViewModel : ObservableObject
     public bool IsLandingWithinEnvelope =>
         IsPointInEnvelope(TotalMassLanding, CgPctMacLanding);
 
+    // ── Takeoff and Landing tabs ─────────────────────────────────────────
+    public RunwayPerformanceViewModel Takeoff { get; } = new(
+        RunwayPerformance.Takeoff,
+        "Takeoff — Sonaca S2 (Sling 2)",
+        "POH §5.3.6  ·  Flaps T/O  ·  Full power  ·  Rotate at VLOF = 55 KIAS",
+        "Takeoff run (estimate)",
+        "Takeoff distance over 15 m (50 ft)");
+
+    public RunwayPerformanceViewModel Landing { get; } = new(
+        RunwayPerformance.Landing,
+        "Landing — Sonaca S2 (Sling 2)",
+        "POH §5.3.10  ·  Flaps LD  ·  Idle power  ·  Approach at 55 KIAS",
+        "Landing run, braked (estimate)",
+        "Landing distance over 15 m (50 ft)");
+
+    public MainViewModel()
+    {
+        UpdateTakeoffLoad();
+        UpdateLandingLoad();
+    }
+
+    private void UpdateTakeoffLoad()
+    {
+        Takeoff.MassText    = $"T/O mass from Weight & Balance: {TotalMassTakeoff:F1} kg";
+        Takeoff.MassWarning = LoadWarning(TotalMassTakeoff, IsTakeoffWithinEnvelope);
+    }
+
+    private void UpdateLandingLoad()
+    {
+        Landing.MassText    = $"Landing mass from Weight & Balance: {TotalMassLanding:F1} kg";
+        Landing.MassWarning = LoadWarning(TotalMassLanding, IsLandingWithinEnvelope);
+    }
+
+    private string LoadWarning(double mass, bool withinEnvelope) =>
+        MassInputError.Length > 0
+            ? "Weight & Balance has an invalid entry, so this mass may be wrong. Correct it on the first tab."
+        : mass > AircraftConstants.MaxTakeOffWeight
+            ? $"Over {AircraftConstants.MaxTakeOffWeight:F0} kg MTOW: these distances are not valid for this load."
+        : !withinEnvelope
+            ? "Outside the CG envelope: these distances are not valid for this load."
+            : "";
+
     // ── Helpers ──────────────────────────────────────────────────────────
     private static bool IsPointInEnvelope(double mass, double cgPct)
     {
@@ -134,6 +227,7 @@ public partial class MainViewModel : ObservableObject
         OnPropertyChanged(nameof(SuggestedFuelMass));
         OnPropertyChanged(nameof(SuggestedFuelLiters));
         OnPropertyChanged(nameof(SuggestedFuelText));
+        UpdateTakeoffLoad();
         NotifyLandingOutputs();
     }
 
@@ -145,5 +239,6 @@ public partial class MainViewModel : ObservableObject
         OnPropertyChanged(nameof(CgMmLanding));
         OnPropertyChanged(nameof(CgPctMacLanding));
         OnPropertyChanged(nameof(IsLandingWithinEnvelope));
+        UpdateLandingLoad();
     }
 }

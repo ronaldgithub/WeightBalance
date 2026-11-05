@@ -1,0 +1,114 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="WeightBalance.Controls.RunwayPerformancePanel">
+
+  <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+    <StackPanel Margin="12,10,12,12" MaxWidth="640" HorizontalAlignment="Left">
+
+      <TextBlock Text="{Binding Title}"
+                 FontSize="13" FontWeight="Bold" Margin="0,0,0,2" />
+      <TextBlock Text="{Binding Conditions}"
+                 FontSize="10.5" Foreground="#999" Margin="0,0,0,8" />
+
+      <!-- Inputs -->
+      <Grid ColumnDefinitions="180,78,*" Margin="0,2">
+        <TextBlock Grid.Column="0" Text="Pressure altitude (ft)" VerticalAlignment="Center" />
+        <TextBox   Grid.Column="1" Text="{Binding PressureAltitudeText}"
+                   AutomationProperties.Name="Pressure altitude"
+                   HorizontalContentAlignment="Right" Padding="4,2" />
+        <TextBlock Grid.Column="2" Text="0 to 8000" Margin="8,0,0,0"
+                   FontSize="10" Foreground="#777" VerticalAlignment="Center" />
+      </Grid>
+      <Grid ColumnDefinitions="180,78,*" Margin="0,2">
+        <TextBlock Grid.Column="0" Text="OAT (°C)" VerticalAlignment="Center" />
+        <TextBox   Grid.Column="1" Text="{Binding OatText}"
+                   AutomationProperties.Name="OAT"
+                   HorizontalContentAlignment="Right" Padding="4,2" />
+        <TextBlock Grid.Column="2" Text="−30 to 35" Margin="8,0,0,0"
+                   FontSize="10" Foreground="#777" VerticalAlignment="Center" />
+      </Grid>
+      <Grid ColumnDefinitions="180,*" Margin="0,2">
+        <TextBlock Grid.Column="0" Text="Surface" VerticalAlignment="Center" />
+        <ComboBox  Grid.Column="1" ItemsSource="{Binding Surfaces}"
+                   SelectedItem="{Binding Surface}"
+                   AutomationProperties.Name="Surface"
+                   MinWidth="120" Padding="6,2" />
+      </Grid>
+      <Grid ColumnDefinitions="180,78,*" Margin="0,2">
+        <TextBlock Grid.Column="0" Text="Wind component (kt)" VerticalAlignment="Center" />
+        <TextBox   Grid.Column="1" Text="{Binding WindText}"
+                   AutomationProperties.Name="Wind component"
+                   HorizontalContentAlignment="Right" Padding="4,2" />
+        <TextBlock Grid.Column="2" Text="+ headwind, − tailwind (max 10)" Margin="8,0,0,0"
+                   FontSize="10" Foreground="#777" VerticalAlignment="Center" />
+      </Grid>
+      <Grid ColumnDefinitions="180,78,*" Margin="0,2">
+        <TextBlock Grid.Column="0" Text="Runway slope (°)" VerticalAlignment="Center" />
+        <TextBox   Grid.Column="1" Text="{Binding SlopeText}"
+                   AutomationProperties.Name="Runway slope"
+                   HorizontalContentAlignment="Right" Padding="4,2" />
+        <TextBlock Grid.Column="2" Text="+ upslope, − downslope" Margin="8,0,0,0"
+                   FontSize="10" Foreground="#777" VerticalAlignment="Center" />
+      </Grid>
+
+      <TextBlock Text="{Binding MassText}"
+                 FontSize="11" Foreground="#BBB" Margin="0,8,0,0" />
+      <TextBlock Text="{Binding MassWarning}"
+                 IsVisible="{Binding MassWarning, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                 FontSize="11" Foreground="Red" TextWrapping="Wrap" Margin="0,2,0,0" />
+
+      <!-- Results -->
+      <Rectangle Height="1" Fill="#444" Margin="0,8,0,8" />
+      <Grid ColumnDefinitions="*,*" Margin="0,0,0,6">
+        <StackPanel Grid.Column="0">
+          <TextBlock Text="{Binding RunLabel}" FontSize="11" Foreground="#BBB" />
+          <TextBlock Text="{Binding RunText}" FontSize="26" FontWeight="Bold" />
+        </StackPanel>
+        <StackPanel Grid.Column="1">
+          <TextBlock Text="{Binding DistanceLabel}" FontSize="11" Foreground="#BBB" />
+          <TextBlock Text="{Binding DistanceText}" FontSize="26" FontWeight="Bold" />
+        </StackPanel>
+      </Grid>
+      <TextBlock Text="{Binding Error}"
+                 IsVisible="{Binding Error, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                 FontSize="11" Foreground="Red" TextWrapping="Wrap" Margin="0,0,0,6" />
+
+      <!-- Breakdown -->
+      <Grid ColumnDefinitions="*,90,90" Margin="0,4,0,2">
+        <TextBlock Grid.Column="0" Text="How this is calculated"
+                   FontSize="10.5" FontWeight="SemiBold" Foreground="#999" />
+        <TextBlock Grid.Column="1" Text="Run (m)"
+                   FontSize="10.5" FontWeight="SemiBold" Foreground="#999" TextAlignment="Right" />
+        <TextBlock Grid.Column="2" Text="Over 15 m (m)"
+                   FontSize="10.5" FontWeight="SemiBold" Foreground="#999" TextAlignment="Right" />
+      </Grid>
+      <Rectangle Height="1" Fill="#444" Margin="0,0,0,2" />
+      <ItemsControl ItemsSource="{Binding Breakdown}">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate>
+            <Grid ColumnDefinitions="*,90,90" Margin="0,2">
+              <TextBlock Grid.Column="0" Text="{Binding Label}" FontSize="12" />
+              <TextBlock Grid.Column="1" Text="{Binding Run}" FontSize="12" TextAlignment="Right" />
+              <TextBlock Grid.Column="2" Text="{Binding Distance}" FontSize="12" TextAlignment="Right" />
+            </Grid>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+      <TextBlock Text="{Binding TableNote}"
+                 IsVisible="{Binding TableNote, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                 FontSize="10" Foreground="#AAA" TextWrapping="Wrap" Margin="0,4,0,0" />
+
+      <!-- Notes -->
+      <Rectangle Height="1" Fill="#333" Margin="0,10,0,6" />
+      <TextBlock Text="Notes"
+                 FontSize="10.5" FontWeight="SemiBold" Foreground="#AAA" />
+      <TextBlock Text="{Binding RunNote}"
+                 FontSize="10" Foreground="#777" TextWrapping="Wrap" Margin="0,2" />
+      <TextBlock Text="The POH pages give no mass correction, so a lighter load does not shorten these distances."
+                 FontSize="10" Foreground="#777" TextWrapping="Wrap" Margin="0,1" />
+      <TextBlock Text="Table values are interpolated. No safety margin is included."
+                 FontSize="10" Foreground="#777" TextWrapping="Wrap" Margin="0,1" />
+
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

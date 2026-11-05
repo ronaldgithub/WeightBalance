@@ -8,7 +8,6 @@
     </Application.Styles>
 
     <Application.Resources>
-        <conv:StringToDoubleConverter    x:Key="S2D" />
         <conv:BoolToEnvelopeColorConverter x:Key="BoolToColor" />
     </Application.Resources>
 </Application>
