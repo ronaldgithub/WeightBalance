@@ -21,20 +21,23 @@ WeightBalance/
 ├── Models/
 │   ├── AircraftConstants.cs      — all POH constants (arms, envelope, fuel)
 │   ├── RunwayPerformance.cs      — POH §5.3.6 / §5.3.10 tables and corrections
+│   ├── EmergencyProcedures.cs    — AFM Section 3 checklists as plain data (groups → procedures → lines)
 │   └── NumberInput.cs            — strict number parsing for all input fields
 ├── ViewModels/
 │   ├── MainViewModel.cs          — inputs, computed totals, envelope check
-│   └── RunwayPerformanceViewModel.cs — inputs and outputs of one Takeoff/Landing tab
+│   ├── RunwayPerformanceViewModel.cs — inputs and outputs of one Takeoff/Landing tab
+│   └── EmergencyViewModel.cs     — read-only view of EmergencyProcedures
 ├── Converters/
 │   └── BoolToEnvelopeColorConverter.cs
 ├── Controls/
 │   ├── CentogramControl.cs       — custom-rendered centogram chart
 │   ├── RunwayPerformancePanel.axaml(.cs) — shared Takeoff/Landing tab layout
-│   └── PerformanceChartsControl.cs — custom-rendered profile + stacked-bar charts
+│   ├── PerformanceChartsControl.cs — custom-rendered profile + stacked-bar charts
+│   └── EmergencyPanel.axaml(.cs) — Emergencies tab: one Expander per group
 ├── Assets/
 │   └── icon.ico                   — app/window icon (multi-res)
 ├── App.axaml / App.axaml.cs      — FluentTheme + converter resources
-├── MainWindow.axaml               — TabControl: Weight & Balance (input | centogram), Takeoff, Landing
+├── MainWindow.axaml               — TabControl: Weight & Balance (input | centogram), Takeoff, Landing, Emergencies
 └── MainWindow.axaml.cs            — sets DataContext = new MainViewModel()
 ```
 
@@ -153,6 +156,17 @@ The POH Hp/OAT tables and constants were checked cell by cell against the POH pa
 (`pic/takeoff_2.png`, `pic/landing_2.png`, `pic/takeoff_1.png`, `pic/landing_1.png`). The one
 open question is the POH wording "ground roll distance" for slope: the code applies slope to
 both run and distance.
+
+## Emergencies tab (AFM Section 3)
+
+Condensed from the S200 AFM SONAIR-S2-D-MAN-001 Rev C, Section 3 (Emergency Procedures).
+`EmergencyProcedures.Groups` holds four groups (Engine failures, Smoke and Fire, Landing and
+handling, Other emergencies). Each is a collapsed `Expander` with a one-line summary; opening
+it shows the procedures with their AFM section numbers. Lines are steps (numbered by the `P()`
+builder), conditions, warnings or notes. To change a checklist, edit the data, not the XAML.
+The tab says it is a memory aid and the AFM is the authority; keep that wording. Two oddities in
+the AFM: 3.3.2's last steps are garbled in the PDF text (read as "land as soon as practical,
+ELT on"), and 3.3.4 points to "3.3.6" for restart where it means 3.3.8.
 
 ## CentogramControl rendering order
 

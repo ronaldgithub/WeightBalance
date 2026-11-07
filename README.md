@@ -19,6 +19,9 @@ A desktop Weight & Balance calculator for the Sonaca S2 (also marketed as the Sl
 - Each of those tabs also draws two charts to the same metre scale: a side view of the run and
   the distance over the 15 m obstacle (mirrored for landing), and stacked bars showing how table
   value, surface, wind and slope add up
+- **Emergencies** tab: short checklists condensed from the AFM Section 3 (engine failures, smoke
+  and fire, landing and handling, other). Each group is a collapsed section; click to show the
+  procedures. A memory aid only: always use the AFM
 - All aircraft constants sourced from **Sonair-S2-D-MAN-001 Rev B** (§2.6, §2.7, §6-5)
 
 ## Screenshot

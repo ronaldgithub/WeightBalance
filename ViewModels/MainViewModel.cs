@@ -206,6 +206,8 @@ public partial class MainViewModel : ObservableObject
         "Takeoff run (estimate)",
         "Takeoff distance over 15 m (50 ft)");
 
+    public EmergencyViewModel Emergencies { get; } = new();
+
     public RunwayPerformanceViewModel Landing { get; } = new(
         RunwayPerformance.Landing,
         "Landing — Sonaca S2 (Sling 2)",

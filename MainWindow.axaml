@@ -227,5 +227,10 @@
       <ctrl:RunwayPerformancePanel DataContext="{Binding Landing}" />
     </TabItem>
 
+    <!-- TAB 4 — Emergencies (AFM Section 3) -->
+    <TabItem Header="Emergencies" FontSize="14">
+      <ctrl:EmergencyPanel DataContext="{Binding Emergencies}" />
+    </TabItem>
+
   </TabControl>
 </Window>
