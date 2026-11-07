@@ -1,0 +1,84 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="WeightBalance.Controls.EmergencyPanel">
+
+  <UserControl.Styles>
+    <Style Selector="TextBlock.warning">
+      <Setter Property="Foreground" Value="#FF6B6B" />
+      <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+    <Style Selector="TextBlock.note">
+      <Setter Property="Foreground" Value="#9AA5B1" />
+    </Style>
+    <Style Selector="TextBlock.condition">
+      <Setter Property="Foreground" Value="#F0A258" />
+      <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+    <Style Selector="Expander.group">
+      <Setter Property="HorizontalAlignment" Value="Stretch" />
+      <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+      <Setter Property="Margin" Value="0,0,0,8" />
+    </Style>
+  </UserControl.Styles>
+
+  <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+    <StackPanel Margin="12,10,12,16" MaxWidth="760" HorizontalAlignment="Left">
+
+      <TextBlock Text="Emergencies — Sonaca S2 (Sling 2)"
+                 FontSize="13" FontWeight="Bold" Margin="0,0,0,2" />
+      <TextBlock Text="{Binding Source}"
+                 FontSize="10.5" Foreground="#999" TextWrapping="Wrap" Margin="0,0,0,8" />
+      <Border Background="#2A1F1F" BorderBrush="#7A3B3B" BorderThickness="1" CornerRadius="4"
+              Padding="10,8" Margin="0,0,0,12">
+        <TextBlock Text="{Binding Priorities}" FontSize="12" FontWeight="SemiBold" TextWrapping="Wrap" />
+      </Border>
+
+      <!-- One expander per group: the header is the summary, a click shows the procedures. -->
+      <ItemsControl ItemsSource="{Binding Groups}">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate>
+            <Expander Classes="group">
+              <Expander.Header>
+                <StackPanel Margin="0,4">
+                  <TextBlock Text="{Binding Title}" FontSize="14" FontWeight="Bold" />
+                  <TextBlock Text="{Binding Summary}" FontSize="10.5" Foreground="#9AA5B1" />
+                </StackPanel>
+              </Expander.Header>
+
+              <ItemsControl ItemsSource="{Binding Procedures}" Margin="4,4,4,8">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate>
+                    <StackPanel Margin="0,0,0,14">
+                      <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,0,0,4">
+                        <TextBlock Text="{Binding Title}" FontSize="13" FontWeight="Bold" />
+                        <TextBlock Text="{Binding Reference, StringFormat='AFM {0}'}"
+                                   FontSize="10.5" Foreground="#7F8B99" VerticalAlignment="Center" />
+                      </StackPanel>
+                      <Rectangle Height="1" Fill="#333" Margin="0,0,0,4" />
+                      <ItemsControl ItemsSource="{Binding Lines}">
+                        <ItemsControl.ItemTemplate>
+                          <DataTemplate>
+                            <Grid ColumnDefinitions="26,*" Margin="0,2">
+                              <TextBlock Grid.Column="0" Text="{Binding Number}"
+                                         IsVisible="{Binding IsStep}"
+                                         FontSize="12" Foreground="#7F8B99" TextAlignment="Right" Margin="0,0,8,0" />
+                              <TextBlock Grid.Column="1" Text="{Binding Text}" FontSize="12" TextWrapping="Wrap"
+                                         Classes.warning="{Binding IsWarning}"
+                                         Classes.note="{Binding IsNote}"
+                                         Classes.condition="{Binding IsCondition}" />
+                            </Grid>
+                          </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                      </ItemsControl>
+                    </StackPanel>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </Expander>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

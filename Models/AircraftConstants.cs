@@ -20,6 +20,7 @@ public static class AircraftConstants
     public const double DefaultBaggageArea2Mass = 0.0;
     public const double DefaultFuelMass         = 100.0;
     public const double DefaultFuelBurnMass     = 15.0;
+    public const double FuelBurnKgPerHour       = 15.0;   // planning burn rate: 15 kg = 1 hour
 
     // Fuel — §2.6
     public const double FuelDensity   = 0.72;   // kg/L (avgas density)

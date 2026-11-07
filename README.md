@@ -8,11 +8,20 @@ A desktop Weight & Balance calculator for the Sonaca S2 (also marketed as the Sl
 - Live centogram chart showing your CG position against the POH envelope
 - Colour-coded rows: green = within limits, red/orange = outside limits
 - Separate Takeoff and Landing CG calculation (accounts for fuel burn)
-- **Calc** button suggests the maximum fuel load (in litres and kg) that keeps
-  the takeoff point within the CG envelope, given your current empty/pilot/baggage weights
+- **Max** button in the Fuel row sets the maximum fuel load that stays at or under MTOW,
+  within the tank capacity and inside the CG envelope, given your current empty/pilot/baggage
+  weights. A short calculation under the Fuel row shows how the number is reached
+- The Fuel row shows the fuel in litres next to the kg field; the Fuel Burn row shows the
+  flight time that burn represents (planning rate 15 kg per hour)
 - **Takeoff** and **Landing** tabs calculate distances from the POH tables (§5.3.6, §5.3.10)
   for pressure altitude, OAT, surface, wind and slope. The distance over 15 m comes from the
   POH table; the ground run is a labelled estimate
+- Each of those tabs also draws two charts to the same metre scale: a side view of the run and
+  the distance over the 15 m obstacle (mirrored for landing), and stacked bars showing how table
+  value, surface, wind and slope add up
+- **Emergencies** tab: short checklists condensed from the AFM Section 3 (engine failures, smoke
+  and fire, landing and handling, other). Each group is a collapsed section; click to show the
+  procedures. A memory aid only: always use the AFM
 - All aircraft constants sourced from **Sonair-S2-D-MAN-001 Rev B** (§2.6, §2.7, §6-5)
 
 ## Screenshot
@@ -41,11 +50,11 @@ dotnet run
 | Baggage (area 1) | Forward baggage, max 35 kg |
 | Baggage (area 2) | Aft baggage, max 25 kg (area 1 + 2 combined ≤ 35 kg) |
 | Fuel | Fuel uplift in kg (max 100.8 kg = 140 L × 0.72 kg/L) |
-| Fuel Burn | Estimated fuel burn for the planned mission |
+| Fuel Burn | Estimated fuel burn for the planned mission in **kg** (not litres). The label next to it shows the time, at 15 kg per hour |
 
 The chart on the right updates in real time as you type. Your **Takeoff** position is shown as a teal dot and the **Landing** position as an orange dot. A red ring indicates the point is outside the envelope.
 
-Click **Calc** next to the Fuel row to fill it with the maximum fuel load that keeps takeoff within the envelope for your current empty/pilot/baggage weights; the red hint text underneath shows the suggested amount in litres and kg.
+Click **Max** in the Fuel row to fill it with the maximum fuel load that keeps takeoff within MTOW and the envelope for your current empty/pilot/baggage weights. The red hint underneath shows the amount in litres and kg, and the grey lines below it show the calculation step by step.
 
 ## Aircraft data (Sonair-S2-D-MAN-001 Rev B)
 

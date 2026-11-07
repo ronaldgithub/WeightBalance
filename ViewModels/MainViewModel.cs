@@ -89,6 +89,20 @@ public partial class MainViewModel : ObservableObject
     public double FuelMoment         => FuelMass         * AircraftConstants.FuelArm;
     public double FuelBurnMoment     => FuelBurnMass     * AircraftConstants.FuelArm;
 
+    public string FuelLitersText =>
+        $"[{(FuelMass / AircraftConstants.FuelDensity).ToString("0.#", System.Globalization.CultureInfo.InvariantCulture)} liter]";
+
+    public string FuelBurnDurationText
+    {
+        get
+        {
+            double hours = FuelBurnMass / AircraftConstants.FuelBurnKgPerHour;
+            double rounded = Math.Round(hours, 1);
+            string unit = rounded == 1 ? "hour" : "hours";
+            return $"[{rounded.ToString("0.#", System.Globalization.CultureInfo.InvariantCulture)} {unit}]";
+        }
+    }
+
     // ── Takeoff totals ───────────────────────────────────────────────────
     public double TotalMassTakeoff =>
         EmptyMass + PilotMass + BaggageArea1Mass + BaggageArea2Mass + FuelMass;
@@ -116,6 +130,36 @@ public partial class MainViewModel : ObservableObject
         SuggestedFuelMass > 0
             ? $"suggest ≈ {SuggestedFuelLiters:F1} L ({SuggestedFuelMass:F1} kg) to stay within envelope"
             : "no fuel load keeps this within the envelope — reduce load";
+
+    public string SuggestedFuelExplanation
+    {
+        get
+        {
+            double baseMass   = EmptyMass + PilotMass + BaggageArea1Mass + BaggageArea2Mass;
+            double baseMoment = EmptyMoment + PilotMoment + BaggageArea1Moment + BaggageArea2Moment;
+            double mtowRoom   = AircraftConstants.MaxTakeOffWeight - baseMass;
+            double tankKg     = AircraftConstants.MaxFuelMass;
+            double upper      = Math.Min(tankKg, mtowRoom);
+            double fuel       = SuggestedFuelMass;
+            if (fuel <= 0) return "";
+
+            string limiter = tankKg <= mtowRoom ? "tank" : "MTOW";
+            double mass    = baseMass + fuel;
+            double cgPct   = 100.0 * ((baseMoment + fuel * AircraftConstants.FuelArm) / mass
+                                      - AircraftConstants.Lemac) / AircraftConstants.Mac;
+
+            string last = fuel < Math.Round(upper, 1) - 0.05
+                ? $"CG envelope limits it further, down to {fuel:F1} kg"
+                : $"CG at {fuel:F1} kg = {cgPct:F2}% MAC → inside envelope";
+
+            return
+                $"Non-fuel: {EmptyMass:F1} + {PilotMass:F1} + {BaggageArea1Mass:F1} + {BaggageArea2Mass:F1} = {baseMass:F1} kg\n" +
+                $"MTOW room: {AircraftConstants.MaxTakeOffWeight:F1} − {baseMass:F1} = {mtowRoom:F1} kg\n" +
+                $"Tank: 140 L × {AircraftConstants.FuelDensity} = {tankKg:F1} kg   → lower of the two = {upper:F1} kg ({limiter} limits)\n" +
+                $"{last}\n" +
+                $"{fuel:F1} kg ÷ {AircraftConstants.FuelDensity} = {fuel / AircraftConstants.FuelDensity:F1} L";
+        }
+    }
 
     [RelayCommand]
     private void ApplySuggestedFuel() => FuelMassText = FormatMass(SuggestedFuelMass);
@@ -162,12 +206,15 @@ public partial class MainViewModel : ObservableObject
         "Takeoff run (estimate)",
         "Takeoff distance over 15 m (50 ft)");
 
+    public EmergencyViewModel Emergencies { get; } = new();
+
     public RunwayPerformanceViewModel Landing { get; } = new(
         RunwayPerformance.Landing,
         "Landing — Sonaca S2 (Sling 2)",
         "POH §5.3.10  ·  Flaps LD  ·  Idle power  ·  Approach at 55 KIAS",
         "Landing run, braked (estimate)",
-        "Landing distance over 15 m (50 ft)");
+        "Landing distance over 15 m (50 ft)",
+        isLanding: true);
 
     public MainViewModel()
     {
@@ -219,6 +266,7 @@ public partial class MainViewModel : ObservableObject
         OnPropertyChanged(nameof(BaggageArea1Moment));
         OnPropertyChanged(nameof(BaggageArea2Moment));
         OnPropertyChanged(nameof(FuelMoment));
+        OnPropertyChanged(nameof(FuelLitersText));
         OnPropertyChanged(nameof(TotalMassTakeoff));
         OnPropertyChanged(nameof(TotalMomentTakeoff));
         OnPropertyChanged(nameof(CgMmTakeoff));
@@ -227,6 +275,7 @@ public partial class MainViewModel : ObservableObject
         OnPropertyChanged(nameof(SuggestedFuelMass));
         OnPropertyChanged(nameof(SuggestedFuelLiters));
         OnPropertyChanged(nameof(SuggestedFuelText));
+        OnPropertyChanged(nameof(SuggestedFuelExplanation));
         UpdateTakeoffLoad();
         NotifyLandingOutputs();
     }
@@ -234,6 +283,7 @@ public partial class MainViewModel : ObservableObject
     private void NotifyLandingOutputs()
     {
         OnPropertyChanged(nameof(FuelBurnMoment));
+        OnPropertyChanged(nameof(FuelBurnDurationText));
         OnPropertyChanged(nameof(TotalMassLanding));
         OnPropertyChanged(nameof(TotalMomentLanding));
         OnPropertyChanged(nameof(CgMmLanding));

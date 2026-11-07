@@ -10,15 +10,26 @@ namespace WeightBalance.ViewModels;
 public sealed record PerformanceBreakdownRow(string Label, string Distance, string Run);
 public sealed record PerformanceTableCell(string Text, bool IsHeader, bool IsUsed);
 
+// Everything PerformanceChartsControl needs, in metres.
+public sealed record PerformanceChartData(
+    bool IsLanding,
+    double Run, double Distance,
+    double TableRun, double TableDistance,
+    double SurfaceRun, double SurfaceDistance,
+    double Wind, double Slope,
+    string SurfaceLabel);
+
 // Backs both the Takeoff and the Landing tab.
 public partial class RunwayPerformanceViewModel : ObservableObject
 {
     private readonly RunwayPerformance _performance;
+    private readonly bool _isLanding;
 
     public RunwayPerformanceViewModel(RunwayPerformance performance, string title, string conditions,
-                                      string runLabel, string distanceLabel)
+                                      string runLabel, string distanceLabel, bool isLanding = false)
     {
         _performance = performance;
+        _isLanding = isLanding;
         _surface = performance.Surfaces[0];
         Title = title;
         Conditions = conditions;
@@ -93,6 +104,15 @@ public partial class RunwayPerformanceViewModel : ObservableObject
         }
     }
 
+    public PerformanceChartData? Chart =>
+        Evaluate(out _) is { } r
+            ? new PerformanceChartData(
+                _isLanding, r.Run, r.Distance, r.TableRun, r.TableDistance,
+                r.TableRun * (r.SurfaceFactor - 1), r.TableDistance * (r.SurfaceFactor - 1),
+                r.WindCorrection, r.SlopeCorrection,
+                Invariant($"{Surface.Name} ×{r.SurfaceFactor:0.0}"))
+            : null;
+
     // The POH table in reading order, with its row and column headers, for a 15-column grid.
     public IReadOnlyList<PerformanceTableCell> TableCells
     {
@@ -153,5 +173,6 @@ public partial class RunwayPerformanceViewModel : ObservableObject
         OnPropertyChanged(nameof(TableNote));
         OnPropertyChanged(nameof(Breakdown));
         OnPropertyChanged(nameof(TableCells));
+        OnPropertyChanged(nameof(Chart));
     }
 }
