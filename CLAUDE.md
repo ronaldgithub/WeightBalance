@@ -29,7 +29,8 @@ WeightBalance/
 │   └── BoolToEnvelopeColorConverter.cs
 ├── Controls/
 │   ├── CentogramControl.cs       — custom-rendered centogram chart
-│   └── RunwayPerformancePanel.axaml(.cs) — shared Takeoff/Landing tab layout
+│   ├── RunwayPerformancePanel.axaml(.cs) — shared Takeoff/Landing tab layout
+│   └── PerformanceChartsControl.cs — custom-rendered profile + stacked-bar charts
 ├── Assets/
 │   └── icon.ico                   — app/window icon (multi-res)
 ├── App.axaml / App.axaml.cs      — FluentTheme + converter resources
@@ -87,9 +88,9 @@ With default inputs the app should show:
 | CG landing | 916.1 mm = 23.07% MAC |
 | Landing in envelope | **true** |
 
-## Fuel suggestion ("Calc" button)
+## Fuel suggestion ("Max" button)
 
-`MainViewModel.SuggestedFuelMass` finds the largest fuel load (empty/pilot/baggage
+The small **Max** button sits in the arm column of the Fuel row. `MainViewModel.SuggestedFuelMass` finds the largest fuel load (empty/pilot/baggage
 held fixed) that keeps the takeoff point at/under MTOW **and** inside the CG
 envelope. It scans down from `min(MaxFuelMass, MTOW − non-fuel mass)` in 0.05 kg
 steps and returns the first mass for which `IsPointInEnvelope` is true (no
@@ -101,6 +102,15 @@ for the red hint label under the Fuel row. The `ApplySuggestedFuelCommand`
 outputs are recalculated in `NotifyAllOutputs()`, not `NotifyLandingOutputs()`,
 since they depend on the non-fuel masses, not on `FuelMass` or `FuelBurnMass`
 itself.
+
+`SuggestedFuelExplanation` writes the same calculation out in grey text under the
+red hint: non-fuel sum, MTOW room, tank limit, which of the two limits, the CG
+check and the litres. It is recalculated with the other suggestion outputs.
+
+Two more labels on the W&B tab: `FuelLitersText` (`[138.9 liter]`, `FuelMass / FuelDensity`,
+left of the fuel field) and `FuelBurnDurationText` (`[1 hour]`, `FuelBurnMass /
+AircraftConstants.FuelBurnKgPerHour`, 15 kg/h, left of the arm in the Fuel Burn row).
+Fuel burn is in kg, not litres.
 
 ## Takeoff and Landing tabs (POH §5.3.6, §5.3.10)
 
@@ -128,6 +138,21 @@ headwind, +24 m/kt tailwind) and slope.
 
 Reference values at 3000 ft, 20 °C, dry grass, 5 kt tailwind, 1° upslope:
 takeoff run 623 m, distance 834 m; landing run 405 m, distance 737 m.
+
+## Takeoff / Landing charts
+
+`PerformanceChartsControl` sits under the POH table on each tab. It takes one
+`PerformanceChartData?` (`RunwayPerformanceViewModel.Chart`, recalculated in
+`NotifyOutputs()`; null when inputs are invalid, which draws a message). It draws two charts
+on the same metre scale: a side view of run and distance over the 15 m obstacle (obstacle
+height not to scale; landing is mirrored via `isLanding`), and stacked bars (table → surface →
+wind → slope) for distance and run. Negative corrections (headwind, downslope) step back from
+the running total. Same custom-render approach as `CentogramControl`.
+
+The POH Hp/OAT tables and constants were checked cell by cell against the POH page images
+(`pic/takeoff_2.png`, `pic/landing_2.png`, `pic/takeoff_1.png`, `pic/landing_1.png`). The one
+open question is the POH wording "ground roll distance" for slope: the code applies slope to
+both run and distance.
 
 ## CentogramControl rendering order
 

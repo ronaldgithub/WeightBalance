@@ -95,9 +95,16 @@
               <!-- 5 · Fuel mass -->
               <Grid ColumnDefinitions="180,78,76,96" Margin="0,2">
                 <TextBlock Grid.Column="0" Text="5  Fuel" VerticalAlignment="Center" />
+                <TextBlock Grid.Column="0" Text="{Binding FuelLitersText}"
+                           FontSize="10" Foreground="#999" Margin="0,0,6,0"
+                           HorizontalAlignment="Right" VerticalAlignment="Center" />
                 <TextBox   Grid.Column="1"
                            Text="{Binding FuelMassText}"
                            HorizontalContentAlignment="Right" Padding="4,2" />
+                <Button Grid.Column="2" Content="Max" FontSize="10" Padding="6,1"
+                        HorizontalAlignment="Left" VerticalAlignment="Center" Margin="4,0,0,0"
+                        Command="{Binding ApplySuggestedFuelCommand}"
+                        ToolTip.Tip="Set fuel to the maximum load that stays within MTOW and the CG envelope" />
                 <TextBlock Grid.Column="2" Text="{Binding FuelArm, StringFormat='{}{0:F0}'}"
                            TextAlignment="Right" VerticalAlignment="Center" />
                 <TextBlock Grid.Column="3" Text="{Binding FuelMoment, StringFormat='{}{0:F0}'}"
@@ -105,14 +112,11 @@
               </Grid>
               <TextBlock Text="     max 140 L × 0.72 = 100.8 kg"
                          FontSize="10" Foreground="#666" Margin="0,-1,0,2" />
+              <TextBlock Text="{Binding SuggestedFuelText}"
+                         FontSize="10" Foreground="Red" Margin="0,0,0,2" />
+              <TextBlock Text="{Binding SuggestedFuelExplanation}"
+                         FontSize="10" Foreground="#888" Margin="0,0,0,2" TextWrapping="Wrap" />
 
-              <StackPanel Orientation="Horizontal" Spacing="6" Margin="0,0,0,2">
-                <Button Content="Calc" FontSize="10" Padding="8,2"
-                        Command="{Binding ApplySuggestedFuelCommand}"
-                        ToolTip.Tip="Set fuel to the maximum load that stays within the CG envelope" />
-                <TextBlock Text="{Binding SuggestedFuelText}"
-                           FontSize="10" Foreground="Red" VerticalAlignment="Center" />
-              </StackPanel>
 
               <!-- ── Total Takeoff ──────────────────────────────────────── -->
               <Rectangle Height="1" Fill="#444" Margin="0,4,0,4" />
@@ -148,6 +152,9 @@
                 <TextBox   Grid.Column="1"
                            Text="{Binding FuelBurnMassText}"
                            HorizontalContentAlignment="Right" Padding="4,2" />
+                <TextBlock Grid.Column="2" Text="{Binding FuelBurnDurationText}"
+                           FontSize="10" Foreground="#999" Margin="4,0,0,0"
+                           HorizontalAlignment="Left" VerticalAlignment="Center" />
                 <TextBlock Grid.Column="2" Text="{Binding FuelArm, StringFormat='{}{0:F0}'}"
                            TextAlignment="Right" VerticalAlignment="Center" />
                 <TextBlock Grid.Column="3" Text="{Binding FuelBurnMoment, StringFormat='{}{0:F0}'}"

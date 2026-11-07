@@ -1,5 +1,6 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="using:WeightBalance.Controls"
              x:Class="WeightBalance.Controls.RunwayPerformancePanel">
 
   <UserControl.Styles>
@@ -157,6 +158,10 @@
       </ItemsControl>
       <TextBlock Text="Blue cells are the ones used for the current altitude and OAT."
                  FontSize="10" Foreground="#AAA" TextWrapping="Wrap" Margin="0,6,0,0" />
+
+      <!-- Charts: side view and build-up of the numbers -->
+      <local:PerformanceChartsControl Data="{Binding Chart}"
+                                      Width="480" Height="310" HorizontalAlignment="Left" Margin="0,12,0,0" />
     </StackPanel>
   </ScrollViewer>
 
